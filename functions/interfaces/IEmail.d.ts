@@ -8,6 +8,10 @@ export interface IEmail {
     templateID: number;
 }
 
+export interface IEmailSchedule extends IEmail {
+    scheduledAt: string;
+}
+
 export interface IEmailContact {
     email: string;
     attributes: {
