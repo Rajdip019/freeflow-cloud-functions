@@ -1,9 +1,9 @@
 import * as functions from "firebase-functions";
 import * as logger from "firebase-functions/logger";
-import { addContact } from "./packages/contactList";
-import { sendEmail } from "./packages/sendEmail";
+import { addContact } from "../../packages/contactList";
+import { sendEmail } from "../../packages/sendEmail";
 
-export const sendWelcomeEmail = functions.firestore
+export const sendWelcomeEmails = functions.firestore
   .document("users/{userId}")
   .onCreate(async (snapshot) => {
     const user = snapshot.data();

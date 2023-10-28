@@ -1,8 +1,12 @@
 import { initializeApp } from "firebase-admin/app";
+import * as functions from "firebase-functions";
+import { getUsers } from "./packages/getAuthUsers";
+import { sendEmailToInactive } from "./modules/emails/reminderEmails";
+import { sendFeaturesMail } from "./modules/emails/promoEmails";
 
 // exporting functions for deployment
-export { sendWelcomeEmail } from "./welcomeEmail";
-export { syncEmailContactsDB } from "./syncEmailContactsDB";
+export { sendWelcomeEmails } from "./modules/emails/welcomeEmails";
+export { syncDeleteEmailContactsDB, syncUpdatesEmailContactsDB } from "./modules/emails/syncEmailContactsDB";
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -16,3 +20,16 @@ const firebaseConfig = {
 
 initializeApp(firebaseConfig);
 
+export const emailScheduleFunction = functions.pubsub
+  .schedule("every day 07:00")
+  .timeZone("Asia/Calcutta")
+  .onRun(async () => {
+    // Fetch all user details.
+    const users = await getUsers();
+
+    // Send email to users.
+    sendEmailToInactive(users);
+    sendFeaturesMail(users);
+
+    functions.logger.log("Reminder emails sent to users.");
+  });
