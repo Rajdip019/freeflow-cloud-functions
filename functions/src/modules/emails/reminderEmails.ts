@@ -8,7 +8,8 @@ export const sendEmailToInactive = async (users: admin.auth.UserRecord[]) => {
     const db = admin.firestore();
     const inactiveUsers = users.filter(
       (user) =>
-        Date.parse(user.metadata.lastSignInTime) < Date.now() - 30 * 24*  60 * 60 * 1000
+        Date.parse(user.metadata.lastSignInTime) <
+        Date.now() - 30 * 24 * 60 * 60 * 1000
     );
     logger.info(`Found ${inactiveUsers.length} inactive users`);
     if (inactiveUsers.length > 0) {
@@ -24,7 +25,7 @@ export const sendEmailToInactive = async (users: admin.auth.UserRecord[]) => {
           logger.info("User metadata exists for last inactive reminder email");
           if (
             userMetadataSnapshot.data()?.last_inactive_reminder_email_sent >
-            Date.now() - 30 * 24*  60 * 60 * 1000
+            Date.now() - 30 * 24 * 60 * 60 * 1000
           ) {
             return logger.info(
               `Reminder email already sent to ${user.email} in last 30 days`
@@ -62,7 +63,8 @@ export const sendNewUserNoDesignUploadReminder = async (
   // Filters that the user is more than 4 days but less than 5 days old
   const newUsersWithNoDesign = users.filter(
     (user) =>
-      Date.parse(user.metadata.creationTime) < Date.now() - 4 * 24 * 60 * 60 * 1000 &&
+      Date.parse(user.metadata.creationTime) <
+        Date.now() - 4 * 24 * 60 * 60 * 1000 &&
       Date.parse(user.metadata.creationTime) >
         Date.now() - 5 * 24 * 60 * 60 * 1000
   );

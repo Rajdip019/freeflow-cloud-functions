@@ -7,6 +7,7 @@ import { sendFeaturesMail } from "./modules/emails/promoEmails";
 // exporting functions for deployment
 export { sendWelcomeEmails } from "./modules/emails/welcomeEmails";
 export { syncDeleteEmailContactsDB, syncUpdatesEmailContactsDB } from "./modules/emails/syncEmailContactsDB";
+export { sendWorkspaceInviteEmail } from "./modules/emails/invitationEmails";
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -21,7 +22,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 export const emailScheduleFunction = functions.pubsub
-  .schedule("every day 21:51")
+  .schedule("every day 08:00")
   .timeZone("Asia/Calcutta")
   .onRun(async () => {
     // Fetch all user details.
