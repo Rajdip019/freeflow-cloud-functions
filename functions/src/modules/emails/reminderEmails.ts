@@ -8,9 +8,9 @@ export const sendEmailToInactive = async (users: admin.auth.UserRecord[]) => {
     const db = admin.firestore();
     const inactiveUsers = users.filter(
       (user) =>
-        Date.parse(user.metadata.lastSignInTime) <
-        Date.now() - 30 * 24 * 60 * 60 * 1000
+        Date.parse(user.metadata.lastSignInTime) < Date.now() - 30 * 24*  60 * 60 * 1000
     );
+    logger.info(`Found ${inactiveUsers.length} inactive users`);
     if (inactiveUsers.length > 0) {
       // if we have inactive users
       inactiveUsers.map(async (user) => {
@@ -19,28 +19,34 @@ export const sendEmailToInactive = async (users: admin.auth.UserRecord[]) => {
         // check if the reminder email has been sent in last 30 days
         if (
           userMetadataSnapshot.exists &&
-          userMetadataSnapshot.data()?.last_inactive_reminder_email_sent !=
-            undefined
+          userMetadataSnapshot.data()?.last_inactive_reminder_email_sent
         ) {
+          logger.info("User metadata exists for last inactive reminder email");
           if (
             userMetadataSnapshot.data()?.last_inactive_reminder_email_sent >
-            Date.now() - 30 * 24 * 60 * 60 * 1000
+            Date.now() - 30 * 24*  60 * 60 * 1000
           ) {
             return logger.info(
               `Reminder email already sent to ${user.email} in last 30 days`
             ); // not sending email if reminder email has been sent in last 30 days
           } else {
             // send email to the users who have uploaded but not signed in for more than 30 days
-            sendEmailAndUpdateDB(user, "last_inactive_reminder_email_sent");
+            await sendEmailAndUpdateDB(
+              user,
+              "last_inactive_reminder_email_sent"
+            );
+            return logger.info(`Sent inactive reminder email to ${user.email}`);
             // add a new object to the firestore that reminder has been sent
           }
         } else {
           // send email to the users who have uploaded but not signed in for more than 30 days
-          sendEmailAndUpdateDB(user, "last_inactive_reminder_email_sent");
+          await sendEmailAndUpdateDB(user, "last_inactive_reminder_email_sent");
+          return logger.info(`Sent inactive reminder email to ${user.email}`);
+          // add a new object to the firestore that reminder has been sent
         }
       });
       return logger.info(
-        `Reminder emails sent to ${inactiveUsers.length} users.`
+        `Reminder emails sent to ${inactiveUsers.length} inactive users.`
       );
     } else {
       return logger.info("No inactive users found to send reminder");
@@ -56,9 +62,8 @@ export const sendNewUserNoDesignUploadReminder = async (
   // Filters that the user is more than 4 days but less than 5 days old
   const newUsersWithNoDesign = users.filter(
     (user) =>
+      Date.parse(user.metadata.creationTime) < Date.now() - 4 * 24 * 60 * 60 * 1000 &&
       Date.parse(user.metadata.creationTime) >
-        Date.now() - 4 * 24 * 60 * 60 * 1000 &&
-      Date.parse(user.metadata.creationTime) <
         Date.now() - 5 * 24 * 60 * 60 * 1000
   );
   if (newUsersWithNoDesign.length > 0) {
@@ -68,11 +73,17 @@ export const sendNewUserNoDesignUploadReminder = async (
         const db = admin.firestore();
         const userRef = db.collection("users").doc(user.uid);
         const userDoc = await userRef.get();
+
+        const workspacesListRef = db
+          .collection("users")
+          .doc(user.uid)
+          .collection("workspaces");
+        const workspacesList = await workspacesListRef.get();
         if (userDoc.exists) {
           // check if the user exists
           const userDesignsRef = db
             .collection("workspaces")
-            .doc(userDoc.data()?.workspaces[0].id as string)
+            .doc(workspacesList.docs[0].id)
             .collection("designs");
           const userDesigns = await userDesignsRef.get();
           const designs = [];
@@ -84,7 +95,7 @@ export const sendNewUserNoDesignUploadReminder = async (
           if (designs.length > 0) {
             return logger.info(`User ${user.email} has uploaded designs.`);
           } else {
-            sendEmail({
+            await sendEmail({
               to: [
                 {
                   email: userDoc.data()?.email,

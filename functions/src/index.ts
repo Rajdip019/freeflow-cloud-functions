@@ -21,15 +21,15 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 
 export const emailScheduleFunction = functions.pubsub
-  .schedule("every day 07:00")
+  .schedule("every day 21:51")
   .timeZone("Asia/Calcutta")
   .onRun(async () => {
     // Fetch all user details.
     const users = await getUsers();
 
     // Send email to users.
-    sendEmailToInactive(users);
-    sendFeaturesMail(users);
+    await sendEmailToInactive(users);
+    await sendFeaturesMail(users);
 
     functions.logger.log("Reminder emails sent to users.");
   });

@@ -2,7 +2,7 @@ import { IEmail, IEmailSchedule } from "../../interfaces/IEmail";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 
-export const sendEmail = async (data : IEmail) => {
+export const sendEmail = async (data: IEmail) => {
   try {
     await fetch("https://api.brevo.com/v3/smtp/email", {
       headers: {
@@ -19,7 +19,7 @@ export const sendEmail = async (data : IEmail) => {
   }
 };
 
-export const scheduleEmail = async (data : IEmailSchedule) => {
+export const scheduleEmail = async (data: IEmailSchedule) => {
   try {
     await fetch("https://api.brevo.com/v3/smtp/schedule", {
       headers: {
@@ -52,11 +52,20 @@ export const sendEmailAndUpdateDB = async (
     templateID: 1,
   });
   // add a new object to the firestore that reminder has been sent
-  const dbRef = db.collection("users").doc(user.uid);
-  if (dbParam == "last_inactive_reminder_email_sent") {
-    await dbRef.update({
-      last_inactive_reminder_email_sent: Date.now(),
-    });
+  const dbRef = db.collection("users-metadata").doc(user.uid);
+  const doc = await dbRef.get();
+  if (doc.exists) {
+    if (dbParam === "last_inactive_reminder_email_sent") {
+      await dbRef.update({
+        last_inactive_reminder_email_sent: Date.now(),
+      });
+    }
+  } else {
+    if (dbParam === "last_inactive_reminder_email_sent") {
+      await dbRef.create({
+        last_inactive_reminder_email_sent: Date.now(),
+      });
+    }
   }
   return logger.info(`Sent email to ${user.email}`);
 };
