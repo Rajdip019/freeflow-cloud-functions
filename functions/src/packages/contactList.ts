@@ -1,4 +1,4 @@
-import { IEmailContact } from "../../interfaces/IEmail";
+import { IEmailContact } from "../interfaces/IEmail";
 import * as logger from "firebase-functions/logger";
 
 export const addContact = async (contact: IEmailContact) => {
