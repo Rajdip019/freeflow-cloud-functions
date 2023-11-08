@@ -1,4 +1,4 @@
-import { IEmail, IEmailSchedule } from "../../interfaces/IEmail";
+import { IEmail, IEmailSchedule } from "../interfaces/IEmail";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 
