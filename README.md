@@ -38,4 +38,38 @@ A GCP Billing account. ( You need to put in your card details here ). As Firebas
 18. deleteExpiredInvitations // http function
 
 There is a toptal of 18 cloud functions that mainly maintains the inegrity of the data. 
+
+**Code of Conduct:**
+
+Please note that we have a code of conduct in place to ensure a welcoming and inclusive community for all contributors. Be respectful and considerate towards others, regardless of background or experience. Harassment or abusive behavior will not be tolerated.
+
+**Get Started:**
+
+Ready to start contributing to Freeflow? Head over to our GitHub repository and fork the project today!
+
+
+[GitHub Repository Link](https://github.com/Rajdip019/freeflow)
+
+We look forward to your contributions and thank you for helping us make Freeflow the best platform for designers and teams!
+
+
+<h2 align='center'> Project maintainers </h2>
+<table align='center'>
+<tr>
+    <td align="center">
+        <a href="https://github.com/Rajdip019">
+            <img src="https://avatars.githubusercontent.com/u/91758830?v=4" width="100;" alt="Debajyoti Saha"/>
+            <br />
+            <sub><b>Rajdeep Sengupta</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/mukeshkuiry">
+            <img src="https://avatars.githubusercontent.com/u/99157367?v=4" width="100;" alt="Mukesh Kuiry"/>
+            <br />
+            <sub><b>Mukesh Kuiry</b></sub>
+        </a>
+    </td>
+  </tr>
+</table>
    
